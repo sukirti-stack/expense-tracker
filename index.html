@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+<script 
+  const SUPABASE_URL = "https://yfihfqvtyxqwfwspckuy.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_QFxard4d0ftZN2W_TVHqmA_txgLDKRx";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <html lang="en">
 
 <head>
@@ -319,8 +328,8 @@
           HDFC Bank
         </option>
 
-        <option value="sbi">
-          SBI Bank
+        <option value="icici">
+          ICICI Bank
         </option>
 
         <option value="cash">
@@ -373,8 +382,8 @@
           HDFC Bank
         </option>
 
-        <option value="sbi">
-          SBI Bank
+        <option value="icici">
+          ICICI Bank
         </option>
 
         <option value="cash">
@@ -418,10 +427,10 @@
       <div class="account">
 
         <span>
-          SBI Bank
+          ICICI Bank
         </span>
 
-        <strong id="sbiBalance">
+        <strong id="iciciBalance">
           ₹0
         </strong>
 
@@ -470,7 +479,7 @@
 
       hdfc: 0,
 
-      sbi: 0,
+      icici: 0,
 
       cash: 0
 
@@ -661,9 +670,9 @@
 
 
       document.getElementById(
-        "sbiBalance"
+        "iciciBalance"
       ).textContent =
-        "₹" + accounts.sbi.toLocaleString("en-IN");
+        "₹" + accounts.icici.toLocaleString("en-IN");
 
 
       document.getElementById(
@@ -676,7 +685,7 @@
 
       const total =
         accounts.hdfc +
-        accounts.sbi +
+        accounts.icici +
         accounts.cash;
 
 
@@ -766,7 +775,7 @@
 
             hdfc: "HDFC Bank",
 
-            sbi: "SBI Bank",
+            icici: "icici Bank",
 
             cash: "Cash"
 
