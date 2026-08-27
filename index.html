@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>My Expense Tracker</title>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -21,7 +28,7 @@
 
     .app {
       max-width: 500px;
-      margin: 0 auto;
+      margin: auto;
     }
 
     h1 {
@@ -42,7 +49,6 @@
     }
 
     .total-label {
-      font-size: 16px;
       color: #666;
     }
 
@@ -57,10 +63,6 @@
       grid-template-columns: 1fr 1fr 1fr;
       gap: 10px;
       text-align: center;
-    }
-
-    .summary-box {
-      padding: 10px 5px;
     }
 
     .summary-label {
@@ -98,6 +100,20 @@
       color: #222;
     }
 
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0 15px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
     .account {
       display: flex;
       justify-content: space-between;
@@ -109,13 +125,40 @@
       border-bottom: none;
     }
 
+    .transaction {
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .transaction:last-child {
+      border-bottom: none;
+    }
+
+    .transaction-top {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .expense-amount {
+      font-weight: bold;
+    }
+
+    .transaction-details {
+      font-size: 13px;
+      color: #777;
+      margin-top: 5px;
+    }
+
     .empty {
       text-align: center;
       color: #777;
       padding: 15px 0;
     }
+
   </style>
+
 </head>
+
 
 <body>
 
@@ -123,172 +166,693 @@
 
     <h1>💰 My Expense Tracker</h1>
 
-    <!-- Total Money -->
+
+    <!-- TOTAL MONEY -->
+
     <div class="card total">
-      <div class="total-label">Total Money</div>
-      <div class="total-amount">₹0</div>
+
+      <div class="total-label">
+        Total Money
+      </div>
+
+      <div
+        class="total-amount"
+        id="totalMoney"
+      >
+        ₹0
+      </div>
+
     </div>
 
-    <!-- Monthly Summary -->
+
+    <!-- MONTHLY SUMMARY -->
+
     <div class="card">
 
       <h2>This Month</h2>
 
       <div class="summary">
 
-        <div class="summary-box">
-          <div class="summary-label">Income</div>
-          <div class="summary-value">₹0</div>
+        <div>
+
+          <div class="summary-label">
+            Income
+          </div>
+
+          <div
+            class="summary-value"
+            id="monthlyIncome"
+          >
+            ₹0
+          </div>
+
         </div>
 
-        <div class="summary-box">
-          <div class="summary-label">Expenses</div>
-          <div class="summary-value">₹0</div>
+
+        <div>
+
+          <div class="summary-label">
+            Expenses
+          </div>
+
+          <div
+            class="summary-value"
+            id="monthlyExpenses"
+          >
+            ₹0
+          </div>
+
         </div>
 
-        <div class="summary-box">
-          <div class="summary-label">Difference</div>
-          <div class="summary-value">₹0</div>
+
+        <div>
+
+          <div class="summary-label">
+            Difference
+          </div>
+
+          <div
+            class="summary-value"
+            id="monthlyDifference"
+          >
+            ₹0
+          </div>
+
         </div>
 
       </div>
 
     </div>
 
-    <!-- Buttons -->
-    <!-- Buttons -->
-<div class="card">
 
-  <div class="buttons">
+    <!-- BUTTONS -->
 
-    <button class="expense-button" onclick="showExpenseForm()">
-      + Add Expense
-    </button>
+    <div class="card">
 
-    <button class="income-button">
-      + Add Income
-    </button>
+      <div class="buttons">
 
-  </div>
+        <button
+          class="expense-button"
+          onclick="showExpenseForm()"
+        >
+          + Add Expense
+        </button>
 
-</div>
 
-<!-- Expense Form -->
-<div class="card" id="expenseForm" style="display: none;">
+        <button
+          class="income-button"
+          onclick="showIncomeForm()"
+        >
+          + Add Income
+        </button>
 
-  <h2>Add Expense</h2>
+      </div>
 
-  <label>Amount</label>
+    </div>
 
-  <input
-    type="number"
-    id="expenseAmount"
-    placeholder="Enter amount"
-    style="width: 100%; padding: 12px; margin: 8px 0 15px 0; font-size: 16px;"
-  >
 
-  <label>Category</label>
+    <!-- EXPENSE FORM -->
 
-  <select
-    id="expenseCategory"
-    style="width: 100%; padding: 12px; margin: 8px 0 15px 0; font-size: 16px;"
-  >
-    <option>Metro</option>
-    <option>Food</option>
-    <option>Shopping</option>
-    <option>Bills</option>
-    <option>Travel</option>
-    <option>Other</option>
-  </select>
+    <div
+      class="card"
+      id="expenseForm"
+      style="display:none;"
+    >
 
-  <label>Source</label>
+      <h2>Add Expense</h2>
 
-  <select
-    id="expenseSource"
-    style="width: 100%; padding: 12px; margin: 8px 0 15px 0; font-size: 16px;"
-  >
-    <option>HDFC Bank</option>
-    <option>SBI Bank</option>
-    <option>Cash</option>
-  </select>
 
-  <button
-    class="expense-button"
-    onclick="saveExpense()"
-    style="width: 100%;"
-  >
-    Save Expense
-  </button>
+      <label>
+        Amount
+      </label>
 
-</div>
+      <input
+        type="number"
+        id="expenseAmount"
+        placeholder="Enter amount"
+      >
 
-    <!-- Accounts -->
+
+      <label>
+        Category
+      </label>
+
+      <select id="expenseCategory">
+
+        <option>Metro</option>
+        <option>Food</option>
+        <option>Shopping</option>
+        <option>Bills</option>
+        <option>Travel</option>
+        <option>Other</option>
+
+      </select>
+
+
+      <label>
+        Source
+      </label>
+
+      <select id="expenseSource">
+
+        <option value="hdfc">
+          HDFC Bank
+        </option>
+
+        <option value="sbi">
+          SBI Bank
+        </option>
+
+        <option value="cash">
+          Cash
+        </option>
+
+      </select>
+
+
+      <button
+        class="expense-button"
+        onclick="saveExpense()"
+        style="width:100%;"
+      >
+        Save Expense
+      </button>
+
+    </div>
+
+
+    <!-- INCOME FORM -->
+
+    <div
+      class="card"
+      id="incomeForm"
+      style="display:none;"
+    >
+
+      <h2>Add Income</h2>
+
+
+      <label>
+        Amount
+      </label>
+
+      <input
+        type="number"
+        id="incomeAmount"
+        placeholder="Enter amount"
+      >
+
+
+      <label>
+        Source
+      </label>
+
+      <select id="incomeSource">
+
+        <option value="hdfc">
+          HDFC Bank
+        </option>
+
+        <option value="sbi">
+          SBI Bank
+        </option>
+
+        <option value="cash">
+          Cash
+        </option>
+
+      </select>
+
+
+      <button
+        class="income-button"
+        onclick="saveIncome()"
+        style="width:100%;"
+      >
+        Save Income
+      </button>
+
+    </div>
+
+
+    <!-- ACCOUNTS -->
+
     <div class="card">
 
       <h2>My Money</h2>
 
-      <div class="account">
-        <span>HDFC Bank</span>
-        <strong>₹0</strong>
-      </div>
 
       <div class="account">
-        <span>SBI Bank</span>
-        <strong>₹0</strong>
+
+        <span>
+          HDFC Bank
+        </span>
+
+        <strong id="hdfcBalance">
+          ₹0
+        </strong>
+
       </div>
 
+
       <div class="account">
-        <span>Cash</span>
-        <strong>₹0</strong>
+
+        <span>
+          SBI Bank
+        </span>
+
+        <strong id="sbiBalance">
+          ₹0
+        </strong>
+
+      </div>
+
+
+      <div class="account">
+
+        <span>
+          Cash
+        </span>
+
+        <strong id="cashBalance">
+          ₹0
+        </strong>
+
       </div>
 
     </div>
 
-    <!-- Transactions -->
+
+    <!-- TRANSACTIONS -->
+
     <div class="card">
 
       <h2>Recent Transactions</h2>
 
-      <div class="empty">
-        No transactions yet.
+      <div id="transactions">
+
+        <div class="empty">
+          No transactions yet.
+        </div>
+
       </div>
 
     </div>
 
   </div>
-<script>
 
-function showExpenseForm() {
 
-  document.getElementById("expenseForm").style.display = "block";
+  <script>
 
-}
+    // Our account balances
 
-function saveExpense() {
+    let accounts = {
 
-  const amount = document.getElementById("expenseAmount").value;
+      hdfc: 0,
 
-  const category = document.getElementById("expenseCategory").value;
+      sbi: 0,
 
-  const source = document.getElementById("expenseSource").value;
+      cash: 0
 
-  if (amount === "" || amount <= 0) {
+    };
 
-    alert("Please enter an amount.");
 
-    return;
+    // Our transactions
 
-  }
+    let transactions = [];
 
-  alert(
-    "Expense saved!\n\n" +
-    "Amount: ₹" + amount + "\n" +
-    "Category: " + category + "\n" +
-    "Source: " + source
-  );
 
-}
+    // Show expense form
 
-</script>
+    function showExpenseForm() {
+
+      document.getElementById(
+        "expenseForm"
+      ).style.display = "block";
+
+      document.getElementById(
+        "incomeForm"
+      ).style.display = "none";
+
+    }
+
+
+    // Show income form
+
+    function showIncomeForm() {
+
+      document.getElementById(
+        "incomeForm"
+      ).style.display = "block";
+
+      document.getElementById(
+        "expenseForm"
+      ).style.display = "none";
+
+    }
+
+
+    // Save expense
+
+    function saveExpense() {
+
+      const amount = Number(
+        document.getElementById(
+          "expenseAmount"
+        ).value
+      );
+
+
+      const category =
+        document.getElementById(
+          "expenseCategory"
+        ).value;
+
+
+      const source =
+        document.getElementById(
+          "expenseSource"
+        ).value;
+
+
+      if (amount <= 0) {
+
+        alert("Please enter an amount.");
+
+        return;
+
+      }
+
+
+      if (amount > accounts[source]) {
+
+        alert(
+          "You don't have enough money in this source."
+        );
+
+        return;
+
+      }
+
+
+      // Decrease account
+
+      accounts[source] -= amount;
+
+
+      // Add transaction
+
+      transactions.unshift({
+
+        type: "expense",
+
+        amount: amount,
+
+        category: category,
+
+        source: source,
+
+        date: new Date()
+
+      });
+
+
+      // Clear amount
+
+      document.getElementById(
+        "expenseAmount"
+      ).value = "";
+
+
+      updateScreen();
+
+    }
+
+
+    // Save income
+
+    function saveIncome() {
+
+      const amount = Number(
+        document.getElementById(
+          "incomeAmount"
+        ).value
+      );
+
+
+      const source =
+        document.getElementById(
+          "incomeSource"
+        ).value;
+
+
+      if (amount <= 0) {
+
+        alert("Please enter an amount.");
+
+        return;
+
+      }
+
+
+      // Increase account
+
+      accounts[source] += amount;
+
+
+      // Add transaction
+
+      transactions.unshift({
+
+        type: "income",
+
+        amount: amount,
+
+        source: source,
+
+        date: new Date()
+
+      });
+
+
+      // Clear amount
+
+      document.getElementById(
+        "incomeAmount"
+      ).value = "";
+
+
+      updateScreen();
+
+    }
+
+
+    // Update everything on screen
+
+    function updateScreen() {
+
+
+      // Account balances
+
+      document.getElementById(
+        "hdfcBalance"
+      ).textContent =
+        "₹" + accounts.hdfc.toLocaleString("en-IN");
+
+
+      document.getElementById(
+        "sbiBalance"
+      ).textContent =
+        "₹" + accounts.sbi.toLocaleString("en-IN");
+
+
+      document.getElementById(
+        "cashBalance"
+      ).textContent =
+        "₹" + accounts.cash.toLocaleString("en-IN");
+
+
+      // Total money
+
+      const total =
+        accounts.hdfc +
+        accounts.sbi +
+        accounts.cash;
+
+
+      document.getElementById(
+        "totalMoney"
+      ).textContent =
+        "₹" + total.toLocaleString("en-IN");
+
+
+      // Monthly income
+
+      let income = 0;
+
+      let expenses = 0;
+
+
+      transactions.forEach(
+        function(transaction) {
+
+          if (
+            transaction.type === "income"
+          ) {
+
+            income += transaction.amount;
+
+          }
+
+
+          if (
+            transaction.type === "expense"
+          ) {
+
+            expenses += transaction.amount;
+
+          }
+
+        }
+      );
+
+
+      document.getElementById(
+        "monthlyIncome"
+      ).textContent =
+        "₹" + income.toLocaleString("en-IN");
+
+
+      document.getElementById(
+        "monthlyExpenses"
+      ).textContent =
+        "₹" + expenses.toLocaleString("en-IN");
+
+
+      document.getElementById(
+        "monthlyDifference"
+      ).textContent =
+        "₹" +
+        (income - expenses)
+          .toLocaleString("en-IN");
+
+
+      // Transactions
+
+      const transactionBox =
+        document.getElementById(
+          "transactions"
+        );
+
+
+      if (transactions.length === 0) {
+
+        transactionBox.innerHTML =
+          '<div class="empty">No transactions yet.</div>';
+
+        return;
+
+      }
+
+
+      transactionBox.innerHTML = "";
+
+
+      transactions.forEach(
+        function(transaction) {
+
+
+          const sourceNames = {
+
+            hdfc: "HDFC Bank",
+
+            sbi: "SBI Bank",
+
+            cash: "Cash"
+
+          };
+
+
+          const div =
+            document.createElement(
+              "div"
+            );
+
+
+          div.className =
+            "transaction";
+
+
+          if (
+            transaction.type === "expense"
+          ) {
+
+            div.innerHTML = `
+
+              <div class="transaction-top">
+
+                <strong>
+                  ${transaction.category}
+                </strong>
+
+                <span class="expense-amount">
+                  -₹${transaction.amount.toLocaleString("en-IN")}
+                </span>
+
+              </div>
+
+              <div class="transaction-details">
+
+                ${sourceNames[transaction.source]}
+
+              </div>
+
+            `;
+
+          } else {
+
+            div.innerHTML = `
+
+              <div class="transaction-top">
+
+                <strong>
+                  Income
+                </strong>
+
+                <span class="expense-amount">
+                  +₹${transaction.amount.toLocaleString("en-IN")}
+                </span>
+
+              </div>
+
+              <div class="transaction-details">
+
+                ${sourceNames[transaction.source]}
+
+              </div>
+
+            `;
+
+          }
+
+
+          transactionBox.appendChild(
+            div
+          );
+
+        }
+      );
+
+    }
+
+
+    // Start the app
+
+    updateScreen();
+
+  </script>
+
+
 </body>
+
 </html>
