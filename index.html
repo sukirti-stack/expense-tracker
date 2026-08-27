@@ -156,21 +156,71 @@
     </div>
 
     <!-- Buttons -->
-    <div class="card">
+    <!-- Buttons -->
+<div class="card">
 
-      <div class="buttons">
+  <div class="buttons">
 
-        <button class="expense-button">
-          + Add Expense
-        </button>
+    <button class="expense-button" onclick="showExpenseForm()">
+      + Add Expense
+    </button>
 
-        <button class="income-button">
-          + Add Income
-        </button>
+    <button class="income-button">
+      + Add Income
+    </button>
 
-      </div>
+  </div>
 
-    </div>
+</div>
+
+<!-- Expense Form -->
+<div class="card" id="expenseForm" style="display: none;">
+
+  <h2>Add Expense</h2>
+
+  <label>Amount</label>
+
+  <input
+    type="number"
+    id="expenseAmount"
+    placeholder="Enter amount"
+    style="width: 100%; padding: 12px; margin: 8px 0 15px 0; font-size: 16px;"
+  >
+
+  <label>Category</label>
+
+  <select
+    id="expenseCategory"
+    style="width: 100%; padding: 12px; margin: 8px 0 15px 0; font-size: 16px;"
+  >
+    <option>Metro</option>
+    <option>Food</option>
+    <option>Shopping</option>
+    <option>Bills</option>
+    <option>Travel</option>
+    <option>Other</option>
+  </select>
+
+  <label>Source</label>
+
+  <select
+    id="expenseSource"
+    style="width: 100%; padding: 12px; margin: 8px 0 15px 0; font-size: 16px;"
+  >
+    <option>HDFC Bank</option>
+    <option>SBI Bank</option>
+    <option>Cash</option>
+  </select>
+
+  <button
+    class="expense-button"
+    onclick="saveExpense()"
+    style="width: 100%;"
+  >
+    Save Expense
+  </button>
+
+</div>
 
     <!-- Accounts -->
     <div class="card">
@@ -206,6 +256,39 @@
     </div>
 
   </div>
+<script>
 
+function showExpenseForm() {
+
+  document.getElementById("expenseForm").style.display = "block";
+
+}
+
+function saveExpense() {
+
+  const amount = document.getElementById("expenseAmount").value;
+
+  const category = document.getElementById("expenseCategory").value;
+
+  const source = document.getElementById("expenseSource").value;
+
+  if (amount === "" || amount <= 0) {
+
+    alert("Please enter an amount.");
+
+    return;
+
+  }
+
+  alert(
+    "Expense saved!\n\n" +
+    "Amount: ₹" + amount + "\n" +
+    "Category: " + category + "\n" +
+    "Source: " + source
+  );
+
+}
+
+</script>
 </body>
 </html>
