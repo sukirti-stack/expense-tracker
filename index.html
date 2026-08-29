@@ -1,16 +1,26 @@
 <!DOCTYPE html>
-<script 
-  const SUPABASE_URL = "https://yfihfqvtyxqwfwspckuy.supabase.co/rest/v1/";
+<script>
+const SUPABASE_URL = "https://yfihfqvtyxqwfwspckuy.supabase.co";
 const SUPABASE_KEY = "sb_publishable_QFxard4d0ftZN2W_TVHqmA_txgLDKRx";
 
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
-  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+// Our account balances
+let accounts = {
+  hdfc: 0,
+  icici: 0,
+  cash: 0
+};
+
+// Our transactions
+let transactions = [];
 <html lang="en">
 
 <head>
+
 
   <meta charset="UTF-8">
 
@@ -20,6 +30,7 @@ const supabase = window.supabase.createClient(
   >
 
   <title>My Expense Tracker</title>
+      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
 
