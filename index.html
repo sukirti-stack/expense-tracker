@@ -3,7 +3,6 @@
 
 <head>
 
-
   <meta charset="UTF-8">
 
   <meta
@@ -12,7 +11,8 @@
   >
 
   <title>My Expense Tracker</title>
-      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
 
@@ -466,466 +466,324 @@
 
 <script>
 
-  // ================================
-  // SUPABASE CONNECTION
-  // ================================
+const SUPABASE_URL = "https://yfihfqvtyxqwfwspckuy.supabase.co/rest/v1/";
 
-  const SUPABASE_URL = "https://yfihfqvtyxqwfwspckuy.supabase.co";
+const SUPABASE_KEY = "sb_publishable_QFxard4d0ftZN2W_TVHqmA_txgLDKRx";
 
-  const SUPABASE_KEY = "sb_publishable_QFxard4d0ftZN2W_TVHqmA_txgLDKRx";
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-  const supabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
+
+let accounts = {
+  hdfc: 0,
+  icici: 0,
+  cash: 0
+};
+
+
+let transactions = [];
+
+
+function showExpenseForm() {
+
+  document.getElementById("expenseForm").style.display = "block";
+
+  document.getElementById("incomeForm").style.display = "none";
+
+}
+
+
+function showIncomeForm() {
+
+  document.getElementById("incomeForm").style.display = "block";
+
+  document.getElementById("expenseForm").style.display = "none";
+
+}
+
+
+async function saveExpense() {
+
+  const amount = Number(
+    document.getElementById("expenseAmount").value
   );
 
+  const category =
+    document.getElementById("expenseCategory").value;
 
-  // ================================
-  // ACCOUNT BALANCES
-  // ================================
-
-  let accounts = {
-    hdfc: 0,
-    icici: 0,
-    cash: 0
-  };
+  const source =
+    document.getElementById("expenseSource").value;
 
 
-  // ================================
-  // TRANSACTIONS
-  // ================================
+  if (amount <= 0) {
 
-  let transactions = [];
+    alert("Please enter an amount.");
 
-
-  // ================================
-  // SHOW EXPENSE FORM
-  // ================================
-
-  function showExpenseForm() {
-
-    document.getElementById("expenseForm").style.display = "block";
-
-    document.getElementById("incomeForm").style.display = "none";
+    return;
 
   }
 
 
-  // ================================
-  // SHOW INCOME FORM
-  // ================================
+  if (amount > accounts[source]) {
 
-  function showIncomeForm() {
+    alert("You don't have enough money in this source.");
 
-    document.getElementById("incomeForm").style.display = "block";
-
-    document.getElementById("expenseForm").style.display = "none";
+    return;
 
   }
 
 
-  // ================================
-  // SAVE EXPENSE
-  // ================================
-
-  async function saveExpense() {
-
-    const amount = Number(
-      document.getElementById("expenseAmount").value
-    );
-
-    const category =
-      document.getElementById("expenseCategory").value;
-
-    const source =
-      document.getElementById("expenseSource").value;
-
-
-    // Check amount
-
-    if (amount <= 0) {
-
-      alert("Please enter an amount.");
-
-      return;
-
-    }
-
-
-    // Check balance
-
-    if (amount > accounts[source]) {
-
-      alert(
-        "You don't have enough money in this source."
-      );
-
-      return;
-
-    }
-
-
-    // Save to Supabase
-
-    const { data, error } = await supabase
-      .from("transactions")
-      .insert([
-        {
-          type: "expense",
-          amount: amount,
-          category: category,
-          source: source
-        }
-      ])
-      .select();
-
-
-    // Check for database error
-
-    if (error) {
-
-      console.error("Supabase error:", error);
-
-      alert(
-        "Could not save expense: " + error.message
-      );
-
-      return;
-
-    }
-
-
-    // Update local account balance
-
-    accounts[source] -= amount;
-
-
-    // Add transaction to screen
-
-    transactions.unshift({
-
+  const { error } = await supabase
+    .from("transactions")
+    .insert({
       type: "expense",
-
       amount: amount,
-
       category: category,
-
-      source: source,
-
-      date: new Date()
-
+      source: source
     });
 
 
-    // Clear form
+  if (error) {
 
-    document.getElementById(
-      "expenseAmount"
-    ).value = "";
+    console.error(error);
 
+    alert("Could not save expense: " + error.message);
 
-    // Update screen
-
-    updateScreen();
-
-
-    alert("Expense saved!");
+    return;
 
   }
 
 
-  // ================================
-  // SAVE INCOME
-  // ================================
+  accounts[source] -= amount;
 
-  async function saveIncome() {
 
-    const amount = Number(
-      document.getElementById("incomeAmount").value
-    );
+  transactions.unshift({
 
-    const source =
-      document.getElementById("incomeSource").value;
+    type: "expense",
+    amount: amount,
+    category: category,
+    source: source,
+    date: new Date()
 
+  });
 
-    // Check amount
 
-    if (amount <= 0) {
-
-      alert("Please enter an amount.");
-
-      return;
-
-    }
-
-
-    // Save to Supabase
-
-    const { data, error } = await supabase
-      .from("transactions")
-      .insert([
-        {
-          type: "income",
-          amount: amount,
-          source: source
-        }
-      ])
-      .select();
-
-
-    // Check for database error
-
-    if (error) {
-
-      console.error("Supabase error:", error);
-
-      alert(
-        "Could not save income: " + error.message
-      );
-
-      return;
-
-    }
-
-
-    // Increase account balance
-
-    accounts[source] += amount;
-
-
-    // Add transaction to screen
-
-    transactions.unshift({
-
-      type: "income",
-
-      amount: amount,
-
-      source: source,
-
-      date: new Date()
-
-    });
-
-
-    // Clear form
-
-    document.getElementById(
-      "incomeAmount"
-    ).value = "";
-
-
-    // Update screen
-
-    updateScreen();
-
-
-    alert("Income saved!");
-
-  }
-
-
-  // ================================
-  // UPDATE SCREEN
-  // ================================
-
-  function updateScreen() {
-
-
-    // ----------------
-    // Account balances
-    // ----------------
-
-    document.getElementById(
-      "hdfcBalance"
-    ).textContent =
-      "₹" + accounts.hdfc.toLocaleString("en-IN");
-
-
-    document.getElementById(
-      "iciciBalance"
-    ).textContent =
-      "₹" + accounts.icici.toLocaleString("en-IN");
-
-
-    document.getElementById(
-      "cashBalance"
-    ).textContent =
-      "₹" + accounts.cash.toLocaleString("en-IN");
-
-
-    // ----------------
-    // Total money
-    // ----------------
-
-    const total =
-      accounts.hdfc +
-      accounts.icici +
-      accounts.cash;
-
-
-    document.getElementById(
-      "totalMoney"
-    ).textContent =
-      "₹" + total.toLocaleString("en-IN");
-
-
-    // ----------------
-    // Monthly income/expenses
-    // ----------------
-
-    let income = 0;
-
-    let expenses = 0;
-
-
-    transactions.forEach(function(transaction) {
-
-      if (transaction.type === "income") {
-
-        income += transaction.amount;
-
-      }
-
-      if (transaction.type === "expense") {
-
-        expenses += transaction.amount;
-
-      }
-
-    });
-
-
-    document.getElementById(
-      "monthlyIncome"
-    ).textContent =
-      "₹" + income.toLocaleString("en-IN");
-
-
-    document.getElementById(
-      "monthlyExpenses"
-    ).textContent =
-      "₹" + expenses.toLocaleString("en-IN");
-
-
-    document.getElementById(
-      "monthlyDifference"
-    ).textContent =
-      "₹" + (income - expenses).toLocaleString("en-IN");
-
-
-    // ----------------
-    // Transactions
-    // ----------------
-
-    const transactionBox =
-      document.getElementById("transactions");
-
-
-    if (transactions.length === 0) {
-
-      transactionBox.innerHTML =
-        '<div class="empty">No transactions yet.</div>';
-
-      return;
-
-    }
-
-
-    transactionBox.innerHTML = "";
-
-
-    transactions.forEach(function(transaction) {
-
-
-      const sourceNames = {
-
-        hdfc: "HDFC Bank",
-
-        icici: "ICICI Bank",
-
-        cash: "Cash"
-
-      };
-
-
-      const div =
-        document.createElement("div");
-
-
-      div.className = "transaction";
-
-
-      // Expense
-
-      if (transaction.type === "expense") {
-
-        div.innerHTML = `
-
-          <div class="transaction-top">
-
-            <strong>
-              ${transaction.category}
-            </strong>
-
-            <span class="expense-amount">
-              -₹${transaction.amount.toLocaleString("en-IN")}
-            </span>
-
-          </div>
-
-          <div class="transaction-details">
-
-            ${sourceNames[transaction.source]}
-
-          </div>
-
-        `;
-
-      }
-
-
-      // Income
-
-      else {
-
-        div.innerHTML = `
-
-          <div class="transaction-top">
-
-            <strong>
-              Income
-            </strong>
-
-            <span class="expense-amount">
-              +₹${transaction.amount.toLocaleString("en-IN")}
-            </span>
-
-          </div>
-
-          <div class="transaction-details">
-
-            ${sourceNames[transaction.source]}
-
-          </div>
-
-        `;
-
-      }
-
-
-      transactionBox.appendChild(div);
-
-    });
-
-  }
-
-
-  // ================================
-  // START APP
-  // ================================
+  document.getElementById("expenseAmount").value = "";
 
   updateScreen();
+
+  alert("Expense saved!");
+
+}
+
+
+async function saveIncome() {
+
+  const amount = Number(
+    document.getElementById("incomeAmount").value
+  );
+
+  const source =
+    document.getElementById("incomeSource").value;
+
+
+  if (amount <= 0) {
+
+    alert("Please enter an amount.");
+
+    return;
+
+  }
+
+
+  const { error } = await supabase
+    .from("transactions")
+    .insert({
+      type: "income",
+      amount: amount,
+      source: source
+    });
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert("Could not save income: " + error.message);
+
+    return;
+
+  }
+
+
+  accounts[source] += amount;
+
+
+  transactions.unshift({
+
+    type: "income",
+    amount: amount,
+    source: source,
+    date: new Date()
+
+  });
+
+
+  document.getElementById("incomeAmount").value = "";
+
+  updateScreen();
+
+  alert("Income saved!");
+
+}
+
+
+function updateScreen() {
+
+  document.getElementById("hdfcBalance").textContent =
+    "₹" + accounts.hdfc.toLocaleString("en-IN");
+
+  document.getElementById("iciciBalance").textContent =
+    "₹" + accounts.icici.toLocaleString("en-IN");
+
+  document.getElementById("cashBalance").textContent =
+    "₹" + accounts.cash.toLocaleString("en-IN");
+
+
+  const total =
+    accounts.hdfc +
+    accounts.icici +
+    accounts.cash;
+
+
+  document.getElementById("totalMoney").textContent =
+    "₹" + total.toLocaleString("en-IN");
+
+
+  let income = 0;
+
+  let expenses = 0;
+
+
+  transactions.forEach(function(transaction) {
+
+    if (transaction.type === "income") {
+
+      income += transaction.amount;
+
+    }
+
+    if (transaction.type === "expense") {
+
+      expenses += transaction.amount;
+
+    }
+
+  });
+
+
+  document.getElementById("monthlyIncome").textContent =
+    "₹" + income.toLocaleString("en-IN");
+
+  document.getElementById("monthlyExpenses").textContent =
+    "₹" + expenses.toLocaleString("en-IN");
+
+  document.getElementById("monthlyDifference").textContent =
+    "₹" + (income - expenses).toLocaleString("en-IN");
+
+
+  const transactionBox =
+    document.getElementById("transactions");
+
+
+  if (transactions.length === 0) {
+
+    transactionBox.innerHTML =
+      '<div class="empty">No transactions yet.</div>';
+
+    return;
+
+  }
+
+
+  transactionBox.innerHTML = "";
+
+
+  transactions.forEach(function(transaction) {
+
+    const sourceNames = {
+
+      hdfc: "HDFC Bank",
+
+      icici: "ICICI Bank",
+
+      cash: "Cash"
+
+    };
+
+
+    const div = document.createElement("div");
+
+    div.className = "transaction";
+
+
+    if (transaction.type === "expense") {
+
+      div.innerHTML = `
+
+        <div class="transaction-top">
+
+          <strong>${transaction.category}</strong>
+
+          <span class="expense-amount">
+            -₹${transaction.amount.toLocaleString("en-IN")}
+          </span>
+
+        </div>
+
+        <div class="transaction-details">
+
+          ${sourceNames[transaction.source]}
+
+        </div>
+
+      `;
+
+    } else {
+
+      div.innerHTML = `
+
+        <div class="transaction-top">
+
+          <strong>Income</strong>
+
+          <span class="expense-amount">
+            +₹${transaction.amount.toLocaleString("en-IN")}
+          </span>
+
+        </div>
+
+        <div class="transaction-details">
+
+          ${sourceNames[transaction.source]}
+
+        </div>
+
+      `;
+
+    }
+
+
+    transactionBox.appendChild(div);
+
+  });
+
+}
+
+
+updateScreen();
 
 </script>
 
