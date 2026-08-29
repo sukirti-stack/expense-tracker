@@ -523,13 +523,66 @@ const supabase = window.supabase.createClient(
 
     // Save expense
 
-    function saveExpense() {
+    async function saveExpense() {
 
-      const amount = Number(
-        document.getElementById(
-          "expenseAmount"
-        ).value
-      );
+  const amount = Number(
+    document.getElementById("expenseAmount").value
+  );
+
+  const category =
+    document.getElementById("expenseCategory").value;
+
+  const source =
+    document.getElementById("expenseSource").value;
+
+  if (amount <= 0) {
+    alert("Please enter an amount.");
+    return;
+  }
+
+  if (amount > accounts[source]) {
+    alert("You don't have enough money in this source.");
+    return;
+  }
+
+  // Save expense to Supabase
+  const { data, error } = await supabase
+    .from("transactions")
+    .insert([
+      {
+        type: "expense",
+        amount: amount,
+        category: category,
+        source: source
+      }
+    ])
+    .select();
+
+  if (error) {
+    console.error(error);
+    alert("Could not save expense: " + error.message);
+    return;
+  }
+
+  // Decrease account
+  accounts[source] -= amount;
+
+  // Add transaction to the screen
+  transactions.unshift({
+    type: "expense",
+    amount: amount,
+    category: category,
+    source: source,
+    date: new Date()
+  });
+
+  // Clear amount
+  document.getElementById("expenseAmount").value = "";
+
+  updateScreen();
+
+  alert("Expense saved!");
+}
 
 
       const category =
