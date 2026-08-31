@@ -464,6 +464,21 @@
 
 
 <script>
+  document.getElementById("addExpenseButton").addEventListener(
+  "click",
+  function () {
+    document.getElementById("expenseForm").style.display = "block";
+    document.getElementById("incomeForm").style.display = "none";
+  }
+);
+
+document.getElementById("addIncomeButton").addEventListener(
+  "click",
+  function () {
+    document.getElementById("incomeForm").style.display = "block";
+    document.getElementById("expenseForm").style.display = "none";
+  }
+);
 
 const SUPABASE_URL = "https://yfihfqvtyxqwfwspckuy.supabase.co/rest/v1/";
 
