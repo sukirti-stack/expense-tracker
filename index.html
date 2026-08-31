@@ -518,7 +518,82 @@
   // =========================
 
   let transactions = [];
+// =========================
+// LOAD TRANSACTIONS
+// =========================
 
+async function loadTransactions() {
+
+  const { data, error } = await supabaseClient
+    .from("transactions")
+    .select("*")
+    .order("id", { ascending: false });
+
+
+  if (error) {
+
+    console.error("Could not load transactions:", error);
+
+    alert(
+      "Could not load transactions: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  // Convert database records into app transactions
+
+  transactions = data.map(function(transaction) {
+
+    return {
+
+      type: transaction.type,
+
+      amount: Number(transaction.amount),
+
+      category: transaction.category,
+
+      source: transaction.source,
+
+      date: transaction.created_at
+
+    };
+
+  });
+
+
+  // Recalculate account balances
+
+  accounts = {
+    hdfc: 0,
+    icici: 0,
+    cash: 0
+  };
+
+
+  transactions.forEach(function(transaction) {
+
+    if (transaction.type === "income") {
+
+      accounts[transaction.source] += transaction.amount;
+
+    }
+
+    if (transaction.type === "expense") {
+
+      accounts[transaction.source] -= transaction.amount;
+
+    }
+
+  });
+
+
+  updateScreen();
+
+}
 
   // =========================
   // SAVE EXPENSE
@@ -580,31 +655,11 @@
     }
 
 
-    accounts[source] -= amount;
+   document.getElementById("expenseAmount").value = "";
 
+await loadTransactions();
 
-    transactions.unshift({
-
-      type: "expense",
-      amount: amount,
-      category: category,
-      source: source,
-      date: new Date()
-
-    });
-
-
-    document.getElementById(
-      "expenseAmount"
-    ).value = "";
-
-
-    updateScreen();
-
-
-    alert("Expense saved!");
-
-  }
+alert("Expense saved!");
 
 
   // =========================
@@ -654,30 +709,11 @@
     }
 
 
-    accounts[source] += amount;
+    document.getElementById("incomeAmount").value = "";
 
+await loadTransactions();
 
-    transactions.unshift({
-
-      type: "income",
-      amount: amount,
-      source: source,
-      date: new Date()
-
-    });
-
-
-    document.getElementById(
-      "incomeAmount"
-    ).value = "";
-
-
-    updateScreen();
-
-
-    alert("Income saved!");
-
-  }
+alert("Income saved!");
 
 
   // =========================
@@ -834,7 +870,7 @@
   // START APP
   // =========================
 
-  updateScreen();
+  loadTransactions();
 
 </script>
 
