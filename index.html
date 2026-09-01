@@ -534,175 +534,85 @@
 
   async function loadTransactions() {
 
-    const { data, error } = await expenseSupabase
-      .from("transactions")
-      .select("*")
-      .order("id", {
-        ascending: false
-      });
+  const { data, error } = await expenseSupabase
+    .from("transactions")
+    .select("*")
+    .order("id", { ascending: false });
 
 
-    if (error) {
+  if (error) {
 
-      console.error(
-        "Load error:",
-        error
-      );
+    console.error("Load error:", error);
 
-      alert(
-        "Could not load transactions: " +
-        error.message
-      );
+    alert(
+      "Could not load transactions: " +
+      error.message
+    );
 
-      return;
+    return;
 
-    }
+  }
 
 
-    // Put database data into our app
+  transactions = data.map(function (transaction) {
 
-    transactions = data.map(function (transaction) {
+    return {
 
-      return {
+      type: transaction.type,
 
-        type: transaction.type,
+      amount: Number(transaction.amount),
 
-        amount: Number(transaction.amount),
+      category: transaction.category,
 
-        category: transaction.category,
+      source: transaction.source,
 
-        source: transaction.source,
-
-        date: transaction.created_at
-
-      };
-
-    });
-
-
-    // ========================================
-    // RECALCULATE ALL ACCOUNT BALANCES
-    // ========================================
-
-    accounts = {
-
-      hdfc: 0,
-
-      icici: 0,
-
-      cash: 0
+      date: transaction.created_at
 
     };
 
+  });
 
-    transactions.forEach(function (transaction) {
 
-  const sourceNames = {
+  // Recalculate account balances
 
-    hdfc: "HDFC Bank",
-    icici: "ICICI Bank",
-    cash: "Cash"
-
+  accounts = {
+    hdfc: 0,
+    icici: 0,
+    cash: 0
   };
 
 
-  const div = document.createElement("div");
+  transactions.forEach(function (transaction) {
 
-  div.className = "transaction";
+    if (
+      transaction.source &&
+      accounts[transaction.source] !== undefined
+    ) {
 
+      if (transaction.type === "income") {
 
-  // Format transaction date
+        accounts[transaction.source] +=
+          transaction.amount;
 
-  const transactionDate =
-    transaction.date
-      ? new Date(transaction.date)
-      : new Date();
-
-
-  const formattedDate =
-    transactionDate.toLocaleDateString(
-      "en-IN",
-      {
-        day: "2-digit",
-        month: "short",
-        year: "numeric"
       }
-    );
+
+      if (transaction.type === "expense") {
+
+        accounts[transaction.source] -=
+          transaction.amount;
+
+      }
+
+    }
+
+  });
 
 
-  const sourceName =
-    sourceNames[transaction.source] ||
-    transaction.source ||
-    "Unknown";
+  // Draw everything on the screen
 
+  updateScreen();
 
-  // Expense
-
-  if (transaction.type === "expense") {
-
-    div.innerHTML = `
-
-      <div class="transaction-top">
-
-        <strong>
-          ${transaction.category || "Expense"}
-        </strong>
-
-        <span class="expense-amount">
-          -₹${transaction.amount.toLocaleString("en-IN")}
-        </span>
-
-      </div>
-
-      <div class="transaction-details">
-
-        ${sourceName} • ${formattedDate}
-
-      </div>
-
-    `;
-
-  }
-
-
-  // Income
-
-  else {
-
-    div.innerHTML = `
-
-      <div class="transaction-top">
-
-        <strong>
-          Income
-        </strong>
-
-        <span class="expense-amount">
-          +₹${transaction.amount.toLocaleString("en-IN")}
-        </span>
-
-      </div>
-
-      <div class="transaction-details">
-
-        ${sourceName} • ${formattedDate}
-
-      </div>
-
-    `;
-
-  }
-
-
-  transactionBox.appendChild(div);
-
-});
-
-
-    updateScreen();
-
-  }
-
+}
 
   // ==========================================
   // SAVE EXPENSE
