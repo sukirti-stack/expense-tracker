@@ -597,29 +597,106 @@
 
     transactions.forEach(function (transaction) {
 
-      if (
-        transaction.source &&
-        accounts[transaction.source] !== undefined
-      ) {
+  const sourceNames = {
 
-        if (transaction.type === "income") {
+    hdfc: "HDFC Bank",
+    icici: "ICICI Bank",
+    cash: "Cash"
 
-          accounts[transaction.source] +=
-            transaction.amount;
-
-        }
+  };
 
 
-        if (transaction.type === "expense") {
+  const div = document.createElement("div");
 
-          accounts[transaction.source] -=
-            transaction.amount;
+  div.className = "transaction";
 
-        }
 
+  // Format transaction date
+
+  const transactionDate =
+    transaction.date
+      ? new Date(transaction.date)
+      : new Date();
+
+
+  const formattedDate =
+    transactionDate.toLocaleDateString(
+      "en-IN",
+      {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
       }
+    );
 
-    });
+
+  const sourceName =
+    sourceNames[transaction.source] ||
+    transaction.source ||
+    "Unknown";
+
+
+  // Expense
+
+  if (transaction.type === "expense") {
+
+    div.innerHTML = `
+
+      <div class="transaction-top">
+
+        <strong>
+          ${transaction.category || "Expense"}
+        </strong>
+
+        <span class="expense-amount">
+          -₹${transaction.amount.toLocaleString("en-IN")}
+        </span>
+
+      </div>
+
+      <div class="transaction-details">
+
+        ${sourceName} • ${formattedDate}
+
+      </div>
+
+    `;
+
+  }
+
+
+  // Income
+
+  else {
+
+    div.innerHTML = `
+
+      <div class="transaction-top">
+
+        <strong>
+          Income
+        </strong>
+
+        <span class="expense-amount">
+          +₹${transaction.amount.toLocaleString("en-IN")}
+        </span>
+
+      </div>
+
+      <div class="transaction-details">
+
+        ${sourceName} • ${formattedDate}
+
+      </div>
+
+    `;
+
+  }
+
+
+  transactionBox.appendChild(div);
+
+});
 
 
     updateScreen();
