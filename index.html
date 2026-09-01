@@ -475,11 +475,10 @@
   const SUPABASE_KEY =
     "sb_publishable_QFxard4d0ftZN2W_TVHqmA_txgLDKRx";
 
-  const supabase =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+  window.expenseSupabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 
   // ==========================================
@@ -535,7 +534,7 @@
 
   async function loadTransactions() {
 
-    const { data, error } = await supabase
+    const { data, error } = await expenseSupabase
       .from("transactions")
       .select("*")
       .order("id", {
@@ -679,7 +678,7 @@
 
     // Save to Supabase
 
-    const { error } = await supabase
+    const { error } = await expenseSupabase
       .from("transactions")
       .insert({
 
@@ -762,7 +761,7 @@
 
     // Save to Supabase
 
-    const { error } = await supabase
+    const { error } = await expenseSupabase
       .from("transactions")
       .insert({
 
